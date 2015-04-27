@@ -1,0 +1,63 @@
+>MT
+NNNNNNNNGAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTNTTTTTTTTTTTTT
+ATTAAAAAAAGAGTGAC
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+
+Anchored Read #: 30; 		......GTGATAGCAGCTTCT		 number of anchors: 1
+	read position: 39, anchored at reference position: 59
+Anchored Read #: 43; 		......AGCAGCTTCTGAACT		 number of anchors: 1
+	read position: 34, anchored at reference position: 59
+Anchored Read #: 146; 		......CATTAAAATTTTATA		 number of anchors: 1
+	read position: 1, anchored at reference position: 59
+Anchored Read #: 225; 		......ATTAAAATTTTATTG		 number of anchors: 4
+	read position: 0, anchored at reference position: 59
+	read position: 1, anchored at reference position: 60
+	read position: 2, anchored at reference position: 61
+	read position: 3, anchored at reference position: 62
+Anchored Read #: 277; 		......TCTGATAGCAGCTTC		 number of anchors: 1
+	read position: 40, anchored at reference position: 59
+Anchored Read #: 280; 		......CTGGTTACCTGCCGT		 number of anchors: 1
+	read position: 21, anchored at reference position: 59
+Anchored Read #: 311; 		......TACCTGCCGTGAGTA		 number of anchors: 4
+	read position: 16, anchored at reference position: 59
+	read position: 17, anchored at reference position: 60
+	read position: 18, anchored at reference position: 61
+	read position: 19, anchored at reference position: 62
+Anchored Read #: 318; 		......TAGCAGCTTCTGAAC		 number of anchors: 1
+	read position: 35, anchored at reference position: 59
+Anchored Read #: 438; 		......TCTGACCTGGTTACC		 number of anchors: 1
+	read position: 27, anchored at reference position: 59
+Anchored Read #: 449; 		......GAACTGGTTACCTGC		 number of anchors: 2
+	read position: 23, anchored at reference position: 58
+	read position: 24, anchored at reference position: 59
+Anchored Read #: 525; 		......CTTCTGAACAGGTTA		 number of anchors: 1
+	read position: 29, anchored at reference position: 59
+Anchored Read #: 568; 		......GTGAGTAAATTAAAA		 number of anchors: 1
+	read position: 8, anchored at reference position: 59
+Anchored Read #: 576; 		......TTACCTGCCGTGAGT		 number of anchors: 1
+	read position: 17, anchored at reference position: 59
+Anchored Read #: 608; 		......CCTGCCTTGATTAAC		 number of anchors: 2
+	read position: 13, anchored at reference position: 58
+	read position: 14, anchored at reference position: 59
+Anchored Read #: 631; 		......TTCTGAACTGGTTAC		 number of anchors: 1
+	read position: 28, anchored at reference position: 59
+Anchored Read #: 680; 		......GCCGTGAGTAAATTA		 number of anchors: 1
+	read position: 11, anchored at reference position: 59
+Anchored Read #: 706; 		......TGATAGCAGCTTCTG		 number of anchors: 1
+	read position: 38, anchored at reference position: 59
+Anchored Read #: 778; 		......TGAACAGGTTACCTG		 number of anchors: 1
+	read position: 25, anchored at reference position: 59
+Anchored Read #: 822; 		......GCAGCTTCTGAACTG		 number of anchors: 1
+	read position: 33, anchored at reference position: 59
+Anchored Read #: 858; 		......TGCCGTGAGTAAATT		 number of anchors: 2
+	read position: 11, anchored at reference position: 58
+	read position: 12, anchored at reference position: 59
+Anchored Read #: 928; 		......GCTTCTGAACTGGTT		 number of anchors: 1
+	read position: 30, anchored at reference position: 59
+Anchored Read #: 933; 		......GCAGCTTCTGAACTG		 number of anchors: 1
+	read position: 33, anchored at reference position: 59
+Anchored Read #: 948; 		......CATCTGAACTGGTTA		 number of anchors: 1
+	read position: 29, anchored at reference position: 59
+Anchored Read #: 982; 		......GTGAGTAAATTAAAA		 number of anchors: 1
+	read position: 8, anchored at reference position: 59
+* 24 out of 1000 reads are anchored.

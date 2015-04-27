@@ -108,8 +108,6 @@ int main(int argc, char* argv[]){
             anchoredR ++;
         }
 
-        totalR ++;
-
         if (read.clipped)    // record clipped reads
         {
             clipcount ++;
@@ -120,6 +118,7 @@ int main(int argc, char* argv[]){
             loReads ++;
         }
 
+        totalR ++;
     }
 
     file << anchoredR << "\n";  // save # of anchored reads for the last bc
