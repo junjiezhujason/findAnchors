@@ -31,7 +31,9 @@ int main(int argc, char* argv[]){
     // -------------- FILE I/O --------------
     std::string bname(bamFname);
     std::string ofname(bamFname);
-    ofname += std::string("_ancounts"); 
+    ofname += std::string("_anc"); 
+    ofname += std::to_string(static_cast<long long>(k)); 
+    
     std::ofstream file (ofname.c_str());
     if (!file.is_open()) 
     {
