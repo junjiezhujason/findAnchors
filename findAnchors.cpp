@@ -3,125 +3,140 @@
 int main(int argc, char* argv[]){
     char* bamFname;
     char* mapFname;
-    char* wellFname;
-    int k;    // kmer length
-    int rLen; // read length
-    int intvl; // number of bases to skip
-    char* tName; // MD or BX
+    int k;          // kmer length
+    int rLen;       // read length
+    int intvl;      // # of bases to skip in read
+    char* tName;    // BX
 
-    if ( argc == 8 ) {
-            bamFname  = argv[1];
-            mapFname = argv[2];
-            k = atoi(argv[3]); // specify k for error control
-            rLen = atoi(argv[4]);
-            intvl = atoi(argv[5]); 
-            tName = argv[6]; 
-            wellFname = argv[7];
-    } else {
+    if ( argc == 7 ) 
+    {
+        bamFname  = argv[1];
+        mapFname = argv[2];
+        k = atoi(argv[3]); 
+        rLen = atoi(argv[4]);
+        intvl = atoi(argv[5]); 
+        tName = argv[6]; 
+    } 
+    else 
+    {
         std::cerr << "Wrong number of arguments." << std::endl;
         exit(1);
     }
 
-    std::string bname(bamFname);
-    
-    BamTools::BamReader reader;
+    // -------------- load the unique kmers into an unordered map --------------
+    umapKmer uniqueKmers; // unique kmer -> string    
+    file_to_unimap(mapFname, uniqueKmers, k); // load uniqueKmerMap (unordered)
 
-    if (!reader.Open(bname)) {
-        std::cerr << "Could not open input BAM file." << std::endl;
+    
+    // -------------- FILE I/O --------------
+    std::string bname(bamFname);
+    std::string ofname(bamFname);
+    ofname += std::string("_ancounts"); 
+    std::ofstream file (ofname.c_str());
+    if (!file.is_open()) 
+    {
+        printf("Cannot open the file %s!\n", ofname.c_str());
         exit(1);
     }
+    BamTools::BamReader reader;
+    if (!reader.Open(bname)) 
+    {
+        printf("Cannot open bam file %s!\n", bname.c_str());
+        exit(1);
+    }
+
+
+    // read the bam file and find anchored reads
     BamTools::BamAlignment al;
-
-
-    // load the unique kmers into an unordered map 
-    
-    
     readwKmer read(rLen, intvl, k);
-
-    umapKmer uniqueKmers; // unique kmer -> string
-    mapCount MapWell;     // barcode -> number of anchored reads
-    
-    uint32_t totalR = 0;        // total number of reads
-    uint32_t anchoredR = 0;     // total number of anchored reads
-    uint32_t loReads = 0;       // number of leftover reads 
-    uint32_t loAnchored = 0;    // number of leftover reads anchored
-    char tagTypeName;
-    barcode_str tagData;
-
+    uint32_t totalR = 0;        // total # of reads
+    uint32_t totalAnchored = 0; // total # of anchored reads
+    uint32_t anchoredR = 0;     // # of anchored reads per barcode
+    uint32_t loReads = 0;       // # of reads w/o barcodes
+    uint32_t loAnchored = 0;    // # of anchored reads w/o barcodes
+    uint32_t clipcount = 0;     // # of reads that are hard clipped
+    barcode_str bc, bc_prev;
+    char tagTypeName;           // type of tag field in BAM format
+    bool nobc_flag = true;
     double duration;
-
-    // takes ~1min and ~8gb to load unique 15mers
-	file_to_unimap(mapFname, uniqueKmers, k); // load uniqueKmerMap (unordered)
-    file_to_wellmap(wellFname, MapWell);      // load all of the wells (ordered)
-    // printMapinfo(uniqueKmers); // print the kmer keys and values
-    
-    // test case
-    // std::list<std::string> LL;
-    // LL.push_back(std::string("GAAAAAAAAAAAAAAAAAA"));
-    // LL.push_back(std::string("AAAAAAAAAAAAAAAATTT")); 
-    // LL.push_back(std::string("AAAAAAAAAAAAATTTTTT"));
-    // LL.push_back(std::string("AAAAAAAAAATTTTTTTTT"));
-    // std::list<std::string>::iterator it;
-    // read_str buffer;
-
-
-
-    uint32_t clipcount = 0;
-
     std::clock_t start;
-    while (reader.GetNextAlignment(al)) {           // each BAM entry is processed in this loop
-        totalR ++;
-        read.init(al.QueryBases);
 
-        if (read.clipped) {
-            clipcount ++;
-        }
+
+    while (reader.GetNextAlignment(al))   // each BAM entry is processed in this loop
+    { 
+        read.init(al.QueryBases);
             
-        while (!read.eor) {
+        while (!read.eor) 
+        {   
             read.lookupKmer(uniqueKmers);
-            // read.printAll();
             read.getNextKmer();
         }
-        read.determineAnchor();
-        
-        if (read.anchored) {
+
+        read.determineAnchor(); // *** this is doing nothing now
+    
+        if (al.GetTagType(tName, tagTypeName))  // reads w/o bc return false
+        {    
+            if (tagTypeName == 'Z')             // verify that type is correct
+            {               
+                al.GetTag(tName, bc);           // extract the tag value from entry
+
+                if (bc.compare(bc_prev) != 0)   // bc is a new barcode
+                {     
+                    if (nobc_flag)              // store # of anchored reads w/o barcodes
+                    { 
+                        loAnchored = anchoredR; 
+                        nobc_flag = false;
+                    } 
+                    else                        // output # of anchored reads w/ barcodes
+                    { 
+                        file << anchoredR << "\n"; 
+                    } 
+                    anchoredR = 0;              // reset counts for this well
+                }                       
+
+                bc_prev = bc;  
+            }   
+            else 
+            {
+                printf("Warning: tagType is not Z - entry ignored \n");
+            }  
+        } 
+
+        if (read.anchored)   // determine if the read is anchored 
+        {   
+            totalAnchored ++;
             anchoredR ++;
         }
 
-        if (al.GetTagType(tName, tagTypeName)) {    // ensure that tagType matches
-            if (tagTypeName == 'Z') {               // verify that type is correct
-                al.GetTag(tName, tagData);          // extract the tag value from entry
-                if (read.anchored) {
-                    MapWell[tagData] ++;            // increment count
-                } 
-            } 
-            else {
-                printf("Warning: tagType is not Z - entry ignored \n");
-                loReads ++;
-                if (read.anchored) { 
-                    loAnchored ++; 
-                }  
-            }  
-        } else {
-            loReads ++;
-            if (read.anchored) { 
-                loAnchored ++; 
-            }   
+        totalR ++;
+
+        if (read.clipped)    // record clipped reads
+        {
+            clipcount ++;
         }
+
+        if (nobc_flag)      // record through reads w/o bc
+        {  
+            loReads ++;
+        }
+
     }
 
-    map_to_file(bamFname, MapWell, loReads, loAnchored); 
+    file << anchoredR << "\n";  // save # of anchored reads for the last bc
+
+    // map_to_file(bamFname, MapWell, loReads, loAnchored); 
 
     duration = ( std::clock() - start ) / (double) CLOCKS_PER_SEC;
     std::cout<<"Duration: "<< duration <<" s.\n";
-    printf("* %u ", anchoredR);
+
+    reader.Close();
+    file.close();
+
+    printf("* %u ", totalAnchored);
     printf("out of %u reads are anchored.\n", totalR);
     printf("* %u ", clipcount);
     printf("out of %u reads are clipped.\n", totalR);
 
-
-    reader.Close();
-    
     // To test how long: use
     //std::clock_t start;
     //double duration;
